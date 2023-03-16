@@ -4,10 +4,12 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D body;
     [SerializeField] private float speed;
+    private Animator anim;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update()
@@ -27,5 +29,8 @@ public class Player : MonoBehaviour
         {
             body.velocity = new Vector2(body.velocity.x, speed);
         }
+
+        //set animator parameters
+        anim.SetBool("isWalking", move != 0);
     }
 }
