@@ -5,6 +5,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D body;
     [SerializeField] private float speed;
     private Animator anim;
+    private bool grounded;
 
     private void Awake()
     {
@@ -20,17 +21,33 @@ public class Player : MonoBehaviour
         // MOVE and Flip left-right
         if (move > 0.01f)
             transform.localScale = Vector3.one;
-        else if (move > 0.01f)
-            transform.localScale = new Vector3(-1, 1, 1);
+        else if (move > -0.01f)
+            transform.localScale = new Vector3(1, 1, 1);
 
 
         // JUMP
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space) && grounded)
         {
-            body.velocity = new Vector2(body.velocity.x, speed);
+            Jump();
         }
 
         //set animator parameters
         anim.SetBool("isWalking", move != 0);
+        anim.SetBool("isGrounded", grounded);
     }
+
+    private void Jump()
+    {
+        body.velocity = new Vector2(body.velocity.x, speed);
+        anim.SetTrigger("isJumping");
+        grounded = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("colidiu");
+        if (collision.gameObject.tag == "Ground")
+            grounded = true;
+    }
+
 }
