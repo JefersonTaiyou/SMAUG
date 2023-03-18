@@ -3,51 +3,94 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D body;
-    [SerializeField] private float speed;
+    private SpriteRenderer sprite;
     private Animator anim;
-    private bool grounded;
 
-    private void Awake()
+    private float speedInin;
+    float move;
+    bool isJumping = false;
+
+    [SerializeField] private float speed = 8f;
+    [SerializeField] private float jumpForce = 14f;
+
+    private void Start()
     {
+        speedInin = speed;
         body = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
     }
-
     private void Update()
     {
-        float move = Input.GetAxis("Horizontal");
-        body.velocity = new Vector2(move * speed, body.velocity.y);
-
         // MOVE and Flip left-right
-        if (move > 0.01f)
-            transform.localScale = Vector3.one;
-        else if (move > -0.01f)
-            transform.localScale = new Vector3(1, 1, 1);
-
+        Walking();
 
         // JUMP
-        if (Input.GetKey(KeyCode.Space) && grounded)
+        if (Input.GetButtonDown("Jump"))
         {
             Jump();
         }
 
-        //set animator parameters
-        anim.SetBool("isWalking", move != 0);
-        anim.SetBool("isGrounded", grounded);
     }
-
     private void Jump()
     {
-        body.velocity = new Vector2(body.velocity.x, speed);
-        anim.SetTrigger("isJumping");
-        grounded = false;
+        body.velocity = new Vector2(body.velocity.x, jumpForce);
+        isJumping = true;
+        anim.SetBool("isJumping", true);
+
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        anim.SetBool("isJumping", false);
+        isJumping = false;
+    }
+    private void Walking()
+    {
+        move = Input.GetAxisRaw("Horizontal");
+        // Walking
+        body.velocity = new Vector2(move * speed, body.velocity.y);
+        float dir = 0;
+
+        if (dir == 0 && move !=0)
+        {
+            dir = move;
+            //Flip 
+            if (dir < 0f)
+                sprite.flipX = true;
+            else
+                sprite.flipX = false;
+        }
+
+
+
+        Running();
+        //Animation walking move
+        if (move != 0 && !isJumping)
+        {
+            anim.SetBool("isWalking", true);
+        }
+        else
+        {
+            anim.SetBool("isWalking", false);
+        }
+    }
+    private void Running()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && move != 0)
+        {
+            anim.SetBool("isRunning", true);
+            speed += 4;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift) || move==0)
+        {
+            anim.SetBool("isRunning", false);
+            speed = speedInin;
+        }
+
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        Debug.Log("colidiu");
-        if (collision.gameObject.tag == "Ground")
-            grounded = true;
-    }
+    /* private void OnTriggerEnter2D(Collider2D collision)
+     {
+     }*/
 
 }
