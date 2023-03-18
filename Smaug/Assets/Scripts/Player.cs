@@ -30,7 +30,6 @@ public class Player : MonoBehaviour
         {
             Jump();
         }
-
     }
     private void Jump()
     {
@@ -60,9 +59,6 @@ public class Player : MonoBehaviour
             else
                 sprite.flipX = false;
         }
-
-
-
         Running();
         //Animation walking move
         if (move != 0 && !isJumping)
@@ -88,9 +84,4 @@ public class Player : MonoBehaviour
         }
 
     }
-
-    /* private void OnTriggerEnter2D(Collider2D collision)
-     {
-     }*/
-
 }
