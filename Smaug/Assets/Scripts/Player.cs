@@ -13,6 +13,11 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed = 8f;
     [SerializeField] private float jumpForce = 14f;
 
+    public GameObject[] Cameras;
+
+    GameObject MainCamera;
+    public int ActiveCam;
+
     private void Start()
     {
         speedInin = speed;
@@ -83,5 +88,16 @@ public class Player : MonoBehaviour
             speed = speedInin;
         }
 
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("colidiu");
+
+            if (ActiveCam == 0)
+        {
+            Cameras[0].active = !(Cameras[0].active);
+            Cameras[1].active = !(Cameras[1].active);
+        
+        }
     }
 }
